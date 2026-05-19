@@ -1293,7 +1293,7 @@ async function chatCompletion(config, messages) {
 
     // Timeout: abort if model doesn't respond in 120s (prevents permanent hang)
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 120000);
+    const timeout = setTimeout(() => controller.abort(), 1200000);
 
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
