@@ -716,10 +716,13 @@ async function runAgentLoop(userMessage, config) {
           console.log(tui.toolSuccess('', toolMs));
         }
 
-        // Add tool result to history (cap to prevent context explosion)
-        // Default 4k chars per result — keeps 10 tool calls at ~10k tokens total
+        // Add tool result to history (cap to prevent context explosion).
+        // 8k chars (~2k tokens) fits ~240 lines, so most source files come
+        // back in a single read_file. Lower cap forced multi-read sequences,
+        // each costing a full LLM turn. Mid-turn eviction (above) is the
+        // safety net if total context still grows too large.
         const toolContent = result.result || result.error || '';
-        const maxToolResultChars = 4000;
+        const maxToolResultChars = parseInt(process.env.SMALLCODE_MAX_TOOL_RESULT_CHARS) || 8000;
         const cappedContent = toolContent.length > maxToolResultChars
           ? toolContent.slice(0, maxToolResultChars - 200) + '\n\n...(truncated, ' + toolContent.length + ' chars total)...\n' + toolContent.slice(-200)
           : toolContent;

@@ -68,6 +68,10 @@ SMALLCODE_BASE_URL=http://localhost:1234/v1
 
 See `.env.example` for all options. Also supports `smallcode.toml` for backwards compatibility.
 
+Notable tunables:
+- `SMALLCODE_CONTEXT_BUDGET` — soft cap on context use (percent of window) before mid-turn tool-result eviction kicks in.
+- `SMALLCODE_MAX_TOOL_RESULT_CHARS` — per-tool-result truncation cap. Default `8000` (~240 lines). Raise it if your model keeps issuing multi-read sequences on the same file; lower it on tight context budgets.
+
 ## Architecture
 
 SmallCode is built with a modular architecture:
