@@ -69,6 +69,14 @@ async function executeTool(name, args, ctx) {
     }
 
     case 'patch': {
+      const __missing = ['path', 'old_str', 'new_str']
+        .filter(k => typeof args[k] !== 'string');
+      if (__missing.length) {
+        return {
+          error: `patch: missing or non-string arg(s): ${__missing.join(', ')}. ` +
+                 `received: ${JSON.stringify(args).slice(0, 200)}`,
+        };
+      }
       let reqPath = args.path.replace(/^\.\//, '').replace(/^\.\\/, '');
       const filePath = path.resolve(cwd, reqPath);
       if (!fs.existsSync(filePath)) return { error: `File not found: ${args.path} (checked: ${filePath})` };
@@ -211,6 +219,14 @@ async function executeTool(name, args, ctx) {
     }
 
     case 'read_and_patch': {
+      const __missing = ['path', 'old_str', 'new_str']
+        .filter(k => typeof args[k] !== 'string');
+      if (__missing.length) {
+        return {
+          error: `read_and_patch: missing or non-string arg(s): ${__missing.join(', ')}. ` +
+                 `received: ${JSON.stringify(args).slice(0, 200)}`,
+        };
+      }
       const filePath = path.resolve(cwd, args.path);
       if (!fs.existsSync(filePath)) return { error: `File not found: ${args.path}` };
       let content = fs.readFileSync(filePath, 'utf-8');
@@ -229,6 +245,14 @@ async function executeTool(name, args, ctx) {
     }
 
     case 'create_and_run': {
+      const __missing = ['path', 'content']
+        .filter(k => typeof args[k] !== 'string');
+      if (__missing.length) {
+        return {
+          error: `create_and_run: missing or non-string arg(s): ${__missing.join(', ')}. ` +
+                 `received: ${JSON.stringify(args).slice(0, 200)}`,
+        };
+      }
       const filePath = path.resolve(cwd, args.path);
       const dir = path.dirname(filePath);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
