@@ -13,7 +13,7 @@ function countTokens(text) {
 }
 
 async function chat(messages, tools = null) {
-  const body = { model: MODEL, messages, temperature: 0.1, max_tokens: 2048 };
+  const body = { model: MODEL, messages, max_tokens: 2048 };
   if (tools) body.tools = tools;
 
   const start = performance.now();

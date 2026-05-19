@@ -180,7 +180,6 @@ Rules:
       model: this.config.model,
       messages,
       tools: tools.length > 0 ? tools : undefined,
-      temperature: 0.1,
       max_tokens: 4096,
     };
 

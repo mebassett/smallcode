@@ -35,7 +35,6 @@ async function chatCompletion(ctx) {
       model: config.model.name,
       messages: [systemMsg, ...processedMessages],
       tools: ctx.getAllTools(config),
-      temperature: 0.1,
       max_tokens: 4096,
     };
 
@@ -97,7 +96,6 @@ async function streamFinalResponse(ctx) {
         model: config.model.name,
         messages: [systemMsg, ...messages.slice(-6)],
         stream: true,
-        temperature: 0.1,
         max_tokens: 256,
       }),
     });

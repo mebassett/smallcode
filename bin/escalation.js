@@ -123,7 +123,6 @@ ${systemPromptExtra}`,
       const body = {
         model: this.model,
         messages,
-        temperature: 0.1,
         max_tokens: 4096,
       };
       if (tools && tools.length > 0) {

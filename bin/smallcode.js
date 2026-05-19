@@ -1306,7 +1306,6 @@ async function chatCompletion(config, messages) {
       model: config.model.name,
       messages: [systemMsg, ...processedMessages],
       tools: getAllTools(config, currentToolCategory),
-      temperature: 0.1,
       max_tokens: 8192,
     };
 
@@ -1411,7 +1410,6 @@ async function streamFinalResponse(config, messages) {
         model: config.model.name,
         messages: [systemMsg, ...messages.slice(-6)],
         stream: true,
-        temperature: 0.1,
         max_tokens: 256,
       }),
       signal: controller.signal,
@@ -1505,7 +1503,6 @@ Rules:
             { role: 'user', content: message },
           ],
           stream: true,
-          temperature: 0.1,
           max_tokens: 8192,
         }),
       });
