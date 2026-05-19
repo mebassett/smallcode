@@ -1305,8 +1305,10 @@ async function chatCompletion(config, messages) {
 
     if (!response.ok) {
       const err = await response.text();
-      // Retry once on 4xx (handles LM Studio model reload / rate limit)
-      if (response.status >= 400 && response.status < 500) {
+      // Retry once on any non-2xx response. 5xx from llama-server is
+      // often a one-off tool-call JSON parse failure that recovers on
+      // the next sampling pass; 4xx covers rate limit / model reload.
+      if (response.status >= 400) {
         await new Promise(r => setTimeout(r, 2000));
         try {
           const retry = await fetch(`${baseUrl}/chat/completions`, {
