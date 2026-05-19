@@ -1307,7 +1307,7 @@ async function chatCompletion(config, messages) {
       messages: [systemMsg, ...processedMessages],
       tools: getAllTools(config, currentToolCategory),
       temperature: 0.1,
-      max_tokens: 4096,
+      max_tokens: 8192,
     };
 
     // Build headers — include Authorization if an API key is available
@@ -1506,7 +1506,7 @@ Rules:
           ],
           stream: true,
           temperature: 0.1,
-          max_tokens: 4096,
+          max_tokens: 8192,
         }),
       });
 
