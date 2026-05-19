@@ -75,6 +75,7 @@ async function executeTool(name, args, ctx) {
         return {
           error: `patch: missing or non-string arg(s): ${__missing.join(', ')}. ` +
                  `received: ${JSON.stringify(args).slice(0, 200)}`,
+          kind: 'validation',
         };
       }
       let reqPath = args.path.replace(/^\.\//, '').replace(/^\.\\/, '');
@@ -225,6 +226,7 @@ async function executeTool(name, args, ctx) {
         return {
           error: `read_and_patch: missing or non-string arg(s): ${__missing.join(', ')}. ` +
                  `received: ${JSON.stringify(args).slice(0, 200)}`,
+          kind: 'validation',
         };
       }
       const filePath = path.resolve(cwd, args.path);
@@ -251,6 +253,7 @@ async function executeTool(name, args, ctx) {
         return {
           error: `create_and_run: missing or non-string arg(s): ${__missing.join(', ')}. ` +
                  `received: ${JSON.stringify(args).slice(0, 200)}`,
+          kind: 'validation',
         };
       }
       const filePath = path.resolve(cwd, args.path);

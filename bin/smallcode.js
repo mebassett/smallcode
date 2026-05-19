@@ -648,6 +648,13 @@ async function runAgentLoop(userMessage, config) {
       // (model may need different categories mid-turn)
       currentToolCategory = null;
 
+      // Snapshot history length before pushing the assistant message. If every
+      // tool call in this turn returns a validation error, we truncate back to
+      // this length and inject a correction prompt — preventing the model's
+      // own malformed output from poisoning context on the retry.
+      const __preTurnHistoryLen = conversationHistory.length;
+      const __validationErrors = [];
+
       // Add assistant message with tool calls to history
       conversationHistory.push(message);
 
@@ -686,6 +693,10 @@ async function runAgentLoop(userMessage, config) {
 
         const result = await executeTool(toolName, toolArgs);
         const toolMs = Date.now() - toolStart2;
+
+        if (result.kind === 'validation') {
+          __validationErrors.push(`${toolName}: ${result.error}`);
+        }
 
         // Record trace step
         traceRecorder.recordToolCall(toolName, toolArgs, result.result || result.error || '', toolMs);
@@ -970,6 +981,23 @@ Read the FULL file above carefully. Fix ALL errors. Use the patch tool with the 
             }
           }
         }
+      }
+
+      // If every tool call in this turn produced a validation error, strip
+      // the poisoned messages (assistant + tool results + any improvement-loop
+      // prompts pushed downstream) and inject a single user-role correction.
+      // The model's next turn sees clean context with explicit guidance,
+      // rather than its own malformed output that biases sampling toward more
+      // malformed output on the retry.
+      if (__validationErrors.length > 0 && __validationErrors.length === message.tool_calls.length) {
+        conversationHistory.length = __preTurnHistoryLen;
+        conversationHistory.push({
+          role: 'user',
+          content: '[SYSTEM] Your previous response contained ONLY invalid tool-call arguments:\n' +
+                   __validationErrors.map(e => '  - ' + e).join('\n') +
+                   '\n\nRe-read the tool schemas and try again with valid arguments.',
+        });
+        console.log(chalk.yellow('  ⚠ All tool calls invalidated — retrying with clean history'));
       }
 
       // Continue the loop — model may want to call more tools or fix errors
